@@ -10,14 +10,24 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import DeleteReservationButton from '../DeleteReservationButton';
+import { UpdateReservationForm } from '../UpdateReservationForm';
+
+type Reservation = {
+    id: string;
+    passenger: { firstName: string; lastName: string; gender: string; age: number; nationality: string };
+    flight: { departureDate: string; arrivalAirport: string; pilotName: string; status: string };
+    airport: { name: string; countryCode: string; countryName: string; continent: string };
+};
 
 type Props = {
     params: {
         id: string;
     };
+    onUpdate: () => {};
 };
 
-const ReservationDetail = async ({ params }: Props) => {
+const ReservationDetail = async ({ params, onUpdate}: Props) => {
     const { id } = params;
 
     if (!id) {
@@ -75,8 +85,8 @@ const ReservationDetail = async ({ params }: Props) => {
                         <span className="font-semibold">Departure Date:</span> {flight.departureDate}
                     </div>
                     <div>
-                        <span className="font-semibold">Arrival Airport:</span> {airport.name} (
-                        {airport.airportCode})
+                        <span className="font-semibold">Airport:</span> {airport.name} (
+                        {airport.countryCode})
                     </div>
                     <div>
                         <span className="font-semibold">Pilot Name:</span> {flight.pilotName}
@@ -98,6 +108,8 @@ const ReservationDetail = async ({ params }: Props) => {
                             Back to Reservations
                         </Button>
                     </Link>
+                    <UpdateReservationForm reservation={reservation} onUpdate={onUpdate} />
+                    <DeleteReservationButton id={id} />
                 </CardFooter>
             </Card>
         </div>

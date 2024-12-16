@@ -1,5 +1,6 @@
 const BASE_URL = "http://localhost:3000";
 
+
 export const fetchReservations = async () => {
     const response = await fetch(`${BASE_URL}/reservations`);
     if (!response.ok) throw new Error('Failed to fetch reservations');
@@ -28,6 +29,22 @@ export const fetchPassengers = async () => {
 export const fetchPassengerById = async (id: number) => {
     const response = await fetch(`${BASE_URL}/passengers/${id}`);
     if (!response.ok) throw new Error("Failed to fetch passenger");
+    const data = response.json();
+    console.log(Array.isArray(data));
+    return data;
+};
+
+export const fetchFlights = async () => {
+    const response = await fetch(`${BASE_URL}/flights`);
+    if (!response.ok) throw new Error("Failed to fetch passengers");
+    const data = response.json();
+    console.log(Array.isArray(data));
+    return data;
+};
+
+export const fetchAirports = async () => {
+    const response = await fetch(`${BASE_URL}/airports`);
+    if (!response.ok) throw new Error("Failed to fetch passengers");
     const data = response.json();
     console.log(Array.isArray(data));
     return data;

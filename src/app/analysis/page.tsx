@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, AreaChart, Area, PieChart, Pie, Cell, Label } from 'recharts';
 import { fetchReservations } from '@/services/api';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { continentMapping } from './continentMapping';
+import { useTheme } from 'next-themes';
 
 // Use the defined types for the state
 interface Flight {
-  status: 'On Time' | 'Delayed';
+  status: 'On Time' | 'Delayed' | 'Cancelled';
 }
 
 interface Passenger {
@@ -31,6 +32,7 @@ interface Reservation {
 }
 
 const FlightAnalysisWithCards = () => {
+  const { theme } = useTheme()
   const [data, setData] = useState<Reservation[]>([]);  // Specify the type as Reservation[]
 
   useEffect(() => {
@@ -50,8 +52,9 @@ const FlightAnalysisWithCards = () => {
 
   // Flight Status Distribution (Bar Chart)
   const flightStatusData = [
-    { name: 'On Time', value: data.filter(item => item.flight.status === 'On Time').length },
-    { name: 'Delayed', value: data.filter(item => item.flight.status === 'Delayed').length }
+    { name: 'On Time', value: data.filter(item => item.flight.status === 'On Time').length, fill:"hsl(var(--chart-2))" },
+    { name: 'Delayed', value: data.filter(item => item.flight.status === 'Delayed').length,fill:"hsl(var(--chart-4))" },
+    { name: 'Cancelled', value: data.filter(item => item.flight.status === 'Cancelled').length,fill:"hsl(var(--chart-1))" },
   ];
 
   // Nationality Distribution (Area Chart)
@@ -76,7 +79,7 @@ const FlightAnalysisWithCards = () => {
 
   // Reservation by Airport (Bar Chart)
   const airportData = data.reduce((acc: any, item) => {
-    const airport = item.airport.airportCode;
+    const airport = item.airport.countryCode;
     acc[airport] = (acc[airport] || 0) + 1;
     return acc;
   }, {});
@@ -87,17 +90,10 @@ const FlightAnalysisWithCards = () => {
   }));
 
   // Continent Distribution (Area Chart)
-  const continentMapping: { [key: string]: string } = {
-    'Japan': 'Asia',
-    'Nicaragua': 'North America',
-    'Russia': 'Europe',
-    'China': 'Asia',
-    'Brazil': 'South America',
-    // Add more mappings as needed
-  };
+  const continents = continentMapping;
 
   const continentData = data.reduce((acc: any, item) => {
-    const continent = continentMapping[item.passenger.nationality] || 'Unknown';
+    const continent = continents[item.passenger.nationality] || 'Unknown';
     acc[continent] = (acc[continent] || 0) + 1;
     return acc;
   }, {});
@@ -113,9 +109,9 @@ const FlightAnalysisWithCards = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 mt-6 pt-5" style={{ marginTop: '100px' }}>
+    <div className="grid grid-cols-2 gap-4 mt-6 pt-5 mb-6 pb-6" style={{ marginTop: '100px' }}>
       {/* Gender Distribution and Age Distribution */}
-      <Card className="h-[400px]">
+      <Card className="h-[400px] ml-9">
         <CardHeader>Gender Distribution</CardHeader>
         <CardContent className="flex justify-center items-center h-[250px]">
           <PieChart width={300} height={200}>
@@ -125,11 +121,12 @@ const FlightAnalysisWithCards = () => {
               ))}
             </Pie>
             <Tooltip />
+            <Legend />
           </PieChart>
         </CardContent>
       </Card>
 
-      <Card className="h-[400px]">
+      <Card className="h-[400px] mr-9">
         <CardHeader>Age Distribution</CardHeader>
         <CardContent className="flex justify-center items-center h-[250px]">
           <PieChart width={300} height={200}>
@@ -148,8 +145,8 @@ const FlightAnalysisWithCards = () => {
                         textAnchor="middle"
                         dominantBaseline="middle"
                       >
-                        <tspan fontSize="16" fill="var(--foreground)">Total</tspan>
-                        <tspan x={viewBox.cx} y={viewBox.cy! + 15} fontSize="14" fill="var(--foreground)">
+                        <tspan fontSize="16" fill="#8884d8">Total</tspan>
+                        <tspan x={viewBox.cx} y={viewBox.cy! + 15} fontSize="14" fill="#8884d8">
                           {ageData.reduce((acc, item) => acc + item.value, 0)}
                         </tspan>
                       </text>
@@ -159,12 +156,14 @@ const FlightAnalysisWithCards = () => {
                 }}
               />
             </Pie>
+            <Legend />
           </PieChart>
+          
         </CardContent>
       </Card>
 
       {/* Flight Status and Reservation by Airport */}
-      <Card>
+      <Card className='ml-9'>
         <CardHeader>Flight Status</CardHeader>
         <CardContent>
           <BarChart width={400} height={200} data={flightStatusData}>
@@ -178,7 +177,7 @@ const FlightAnalysisWithCards = () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className='mr-9'>
         <CardHeader>Reservation by Airport</CardHeader>
         <CardContent>
           <BarChart width={400} height={200} data={airportChartData}>
@@ -193,7 +192,7 @@ const FlightAnalysisWithCards = () => {
       </Card>
 
       {/* Nationality Distribution and Continent Distribution */}
-      <div className="grid grid-cols-1 gap-4 mt-6">
+      <div className="grid grid-cols-1 gap-4 mt-6 ml-9">
         <Card className='w-[1000px]'>
           <CardHeader>Nationality Distribution</CardHeader>
           <CardContent>

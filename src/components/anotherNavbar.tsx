@@ -17,31 +17,31 @@ import { ModeToggle } from "./modeToggle"
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Restfull service",
+    title: "Reservations",
     href: "/reservations",
     description:
       "View and manage flight reservations. Browse all bookings, access detailed passenger and flight information, and track reservation statuses.",
   },
   {
-    title: "GraphQl-service",
-    href: "/docs/primitives/hover-card",
+    title: "Passengers",
+    href: "/passengers",
     description:
       "For sighted users to preview content available behind a link.",
   },
   {
-    title: "SOAP service",
-    href: "/docs/primitives/progress",
+    title: "Flights",
+    href: "/flights",
     description:
       "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
   },
   {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
+    title: "Analytics",
+    href: "/analysis",
     description: "Visually or semantically separates content.",
   },
   {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
+    title: "Airports",
+    href: "/airports",
     description:
       "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
@@ -54,8 +54,13 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function NavigationMenuDemo() {
+  
   return (
-    <NavigationMenu className="flex flex-1 items-center justify-start w-full max-w-full fixed top-0 left-0 z-50 shadow-md border-b mb-6">
+    <NavigationMenu 
+      className={cn(
+        "flex flex-1 items-center justify-start w-full max-w-full fixed top-0 left-0 z-50 bg-inherit shadow-md border-b mb-6"
+      )}
+      suppressHydrationWarning>
       <NavigationMenuList className="p-2 flex justify-start items-center">
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
